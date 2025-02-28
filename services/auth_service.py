@@ -26,5 +26,5 @@ class AuthService:
         if not user or not user.check_password(password):
             return {"error": "Invalid credentials"}, 401
         
-        access_token = create_access_token(identity=user.id, expires_delta=timedelta(hours=2))
+        access_token = create_access_token(identity=str(user.id), expires_delta=timedelta(hours=2))
         return {"access_token": access_token}, 200
