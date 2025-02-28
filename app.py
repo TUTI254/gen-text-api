@@ -1,28 +1,22 @@
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
 from flask_jwt_extended import JWTManager
-import os
-from dotenv import load_dotenv
-
-# Load environment variables
-load_dotenv()
+from config import Config
+from database import init_db
+from routes.auth import auth_bp
 
 app = Flask(__name__)
+app.config.from_object(Config)
 
-# Configurations
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['JWT_SECRET_KEY'] = os.getenv('SECRET_KEY')
-
-# Initialize Extensions
-db = SQLAlchemy(app)
-migrate = Migrate(app, db)
+# Initialize database and JWT
+init_db(app)
 jwt = JWTManager(app)
 
-@app.route('/')
+# Register blueprints
+app.register_blueprint(auth_bp)
+
+@app.route("/")
 def home():
     return {"message": "Welcome to AI-Powered Text Generation API"}
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run(debug=True)
