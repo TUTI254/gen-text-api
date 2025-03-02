@@ -26,13 +26,22 @@ This is a Flask-based API that allows users to generate AI-powered text using Op
 
 3. **Remember to Set the OpenAI API key in the .env file:**
    ```bash
-   OPENAI_API_KEY=sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+   OPENAI_API_KEY=sk-xxxx
    ```
 
 4. **How to run the application:**
+
+  **Option 1:Using Docker Compose**
+  Use Docker Compose to build the images and start the services:
    ```bash
+   docker-compose up --build
+
+   ```
+
+  **Option 2:without Docker**
    * create a virtual environment
    python3 -m venv venv
+   * activate the virtual environment
    source venv/bin/activate
 
    * install dependencies
@@ -42,7 +51,7 @@ This is a Flask-based API that allows users to generate AI-powered text using Op
    flask run
    ```
 
-5. **Access the application:**
+ **Access the application:**
     * The Flask application will be accessible at localhost:5000.
 
 ## API Endpoints

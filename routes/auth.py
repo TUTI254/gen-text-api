@@ -1,5 +1,5 @@
-from flask import Blueprint, request
-from flask_jwt_extended import jwt_required
+from flask import Blueprint, request, jsonify, make_response
+from flask_jwt_extended import jwt_required, set_access_cookies,unset_jwt_cookies
 from services.auth_service import AuthService
 
 auth_bp = Blueprint("auth", __name__, url_prefix="/api/auth")
@@ -24,4 +24,21 @@ def login():
     if not username or not password:
         return {"error": "Username and password are required"}, 400
 
-    return AuthService.login_user(username, password)
+    result, status_code = AuthService.login_user(username, password)
+
+    if status_code != 200:
+        return result, status_code
+
+    # Retrieve the access token from the result
+    access_token = result.get("access_token")
+    # Create a response and set the JWT in a secure cookie
+    response = make_response(jsonify({"message": "Login successful"}), 200)
+    set_access_cookies(response, access_token)
+    return response
+
+@auth_bp.route("/logout", methods=["POST"])
+@jwt_required()
+def logout():
+    response = make_response(jsonify({"message": "Logout successful"}), 200)
+    unset_jwt_cookies(response)
+    return response

@@ -5,21 +5,23 @@ from database import init_db
 from routes.auth import auth_bp
 from routes.text_generation import text_bp
 
-app = Flask(__name__)
-app.config.from_object(Config)
+def create_app(config_object=Config):
+    app = Flask(__name__)
+    app.config.from_object(config_object)
 
-# Initialize database and JWT
-init_db(app)
-jwt = JWTManager(app)
+    init_db(app)
+    JWTManager(app)
 
-# Register blueprints
-app.register_blueprint(auth_bp)
-app.register_blueprint(text_bp)
+    app.register_blueprint(auth_bp)
+    app.register_blueprint(text_bp)
 
+    @app.route("/")
+    def home():
+        return {"message": "Welcome to AI-Powered Text Generation API"}
+    
+    return app
 
-@app.route("/")
-def home():
-    return {"message": "Welcome to AI-Powered Text Generation API"}
+app = create_app()
 
 if __name__ == "__main__":
     app.run(debug=True)
