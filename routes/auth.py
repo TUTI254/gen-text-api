@@ -1,6 +1,9 @@
 from flask import Blueprint, request, jsonify, make_response
 from flask_jwt_extended import jwt_required, set_access_cookies,unset_jwt_cookies
 from services.auth_service import AuthService
+import logging
+
+logger = logging.getLogger(__name__)
 
 auth_bp = Blueprint("auth", __name__, url_prefix="/api/auth")
 
@@ -11,7 +14,8 @@ def register():
     password = data.get("password")
 
     if not username or not password:
-        return {"error": "Username and password are required"}, 400
+        logger.debug("Register validation failed: missing username or password")
+        return {"error": "Username and password are required"}, 422
 
     return AuthService.register_user(username, password)
 
@@ -22,7 +26,8 @@ def login():
     password = data.get("password")
 
     if not username or not password:
-        return {"error": "Username and password are required"}, 400
+        logger.debug("Login validation failed: missing username or password")
+        return {"error": "Username and password are required"}, 422
 
     result, status_code = AuthService.login_user(username, password)
 
