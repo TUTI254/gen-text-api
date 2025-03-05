@@ -1,16 +1,16 @@
 # AI-Powered Text Generation API
 
-This is a Flask-based API that allows users to generate AI-powered text using OpenAI's GPT-4 model. It includes user authentication, text generation, and CRUD operations for generated texts.
+This is a Flask-based API that allows users to generate AI-powered text using Multiple AI providers. It includes user authentication, text generation, and CRUD operations for generated texts.
 
 ## Features
 - User registration and login with JWT authentication.
-- Generate AI-powered text using OpenAI's GPT-4 model.
+- Generate AI-powered text using multiple AI providers.
 - Save, retrieve, update, and delete generated texts.
 - PostgreSQL database for persistent storage.
 
 ## Prerequisites
 - Docker and Docker Compose installed.
-- OpenAI API key.
+- OpenAI/Gemini/etc API key.
 
 ## Setup and Deployment
 
@@ -27,6 +27,7 @@ This is a Flask-based API that allows users to generate AI-powered text using Op
 3. **Remember to Set the OpenAI API key in the .env file:**
    ```bash
    OPENAI_API_KEY=sk-xxxx
+   GOOGLE_API_KEY=xxxx
    ```
 
 4. **How to run the application:**
@@ -47,8 +48,13 @@ This is a Flask-based API that allows users to generate AI-powered text using Op
    * install dependencies
    pip install -r requirements.txt
 
+  * run migrations to create the database tables
+   flask db migrate
+   flask db upgrade
+
    * run the application
    flask run
+
    ```
 
  **Access the application:**
