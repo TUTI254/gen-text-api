@@ -7,10 +7,11 @@ class AuthService:
     @staticmethod
     def register_user(username, password):
         """Registers a new user"""
-        if User.query.filter_by(username=username).first():
+        normalized_username = username.lower()
+        if User.query.filter_by(username=normalized_username).first():
             return {"error": "User already exists"}, 400
         
-        user = User(username=username)
+        user = User(username=normalized_username)
         user.set_password(password)
         
         db.session.add(user)
@@ -21,7 +22,8 @@ class AuthService:
     @staticmethod
     def login_user(username, password):
         """Authenticates and returns a JWT token"""
-        user = User.query.filter_by(username=username).first()
+        normalized_username = username.lower()
+        user = User.query.filter_by(username=normalized_username).first()
         
         if not user or not user.check_password(password):
             return {"error": "Invalid credentials"}, 401
