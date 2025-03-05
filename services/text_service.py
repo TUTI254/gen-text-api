@@ -1,31 +1,21 @@
-import os
-from openai import OpenAI
 from database import db
 from models.generated_text import GeneratedText
 from sqlalchemy.exc import SQLAlchemyError
-
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-
+from utils.providers.ai_provider_factory import AIProviderFactory
 
 class TextService:
     @staticmethod
-    def generate_text(user_id: int, prompt: str):
-        """Generates AI text from OpenAI API and saves it"""
+    def generate_text(user_id: int, prompt: str, provider: str = "gemini"):
+        """Generates AI text using the specified provider and saves it."""
         if not isinstance(prompt, str) or not prompt.strip():
             return {"error": "Prompt must be a non-empty string"}, 400
 
         try:
             user_id = int(user_id)
 
-            completion = client.chat.completions.create(
-                model="gpt-4o-mini",
-                messages=[
-                    {"role": "system", "content": "You are a helpful AI assistant."},
-                    {"role": "user", "content": prompt}
-                ]
-            )
-
-            ai_response = completion.choices[0].message.content
+            # Create the provider instance based on the given provider name.
+            provider_instance = AIProviderFactory.get_provider(provider)
+            ai_response = provider_instance.generate_text(prompt)
 
             # Save generated response to database
             generated_text = GeneratedText(user_id=user_id, prompt=prompt, response=ai_response)
@@ -39,8 +29,8 @@ class TextService:
                 "timestamp": generated_text.timestamp
             }, 201
 
-        except ValueError:
-            return {"error": "Invalid user_id format"}, 400
+        except ValueError as ve:
+            return {"error": str(ve)}, 400
         except Exception as e:
             return {"error": f"Unexpected error: {str(e)}"}, 500
 
@@ -82,7 +72,6 @@ class TextService:
                 return {"error": "Text not found"}, 404
 
             generated_text.response = new_response
-
             db.session.commit()
             return {"message": "Text updated successfully"}, 200
 
@@ -112,4 +101,3 @@ class TextService:
         except SQLAlchemyError as e:
             db.session.rollback()
             return {"error": f"Database error: {str(e)}"}, 500
-        

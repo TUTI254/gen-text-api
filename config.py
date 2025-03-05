@@ -8,7 +8,7 @@ class Config:
     SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL", "postgresql://postgres:password@db:5432/gen_text_ai")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "supersecurejwtkey")
-    JWT_TOKEN_LOCATION = ["cookies"]
+    JWT_TOKEN_LOCATION = ["cookies", "headers"]
     JWT_COOKIE_SECURE = True
     JWT_COOKIE_SAMESITE = "Lax"
     JWT_ACCESS_COOKIE_PATH = "/"

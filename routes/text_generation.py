@@ -1,11 +1,15 @@
 from flask import Blueprint, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 from services.text_service import TextService
 
 text_bp = Blueprint("text", __name__, url_prefix="/api/text")
+limiter = Limiter(key_func=get_remote_address)
 
 @text_bp.route("/generate-text", methods=["POST"])
 @jwt_required()
+@limiter.limit("5 per minute")
 def generate_text():
     """Generate AI-powered text"""
     data = request.get_json()
