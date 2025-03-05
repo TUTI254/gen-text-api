@@ -4,10 +4,16 @@ from config import Config
 from database import init_db
 from routes.auth import auth_bp
 from routes.text_generation import text_bp
+import logging
 
 def create_app(config_object=Config):
     app = Flask(__name__)
     app.config.from_object(config_object)
+    
+    logging.basicConfig(
+        level=logging.DEBUG,
+        format='%(asctime)s - %(levelname)s - %(name)s - %(message)s'
+    )
 
     init_db(app)
     JWTManager(app)
